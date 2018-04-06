@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.1.0.min.js"></script>
+  <style type="text/css">
+  	circle.dimple-series-0 {
+  		fill: blue;
+  	}
+  	
+  	h2 {
+  		text-align: center;
+  	}
+  </style>
+    <script type="text/javascript">
+      function draw(data) {
+      
+      /*
+        D3.js setup code
+      */
+
+          "use strict";
+          var margin = 75,
+              width = 1400 - margin,
+              height = 600 - margin;
+
+          d3.select('body')
+          	.append('h2')
+          	.text("Number and Average price of sold businesses");
+
+          //debugger;
+                    
+          var svg = d3.select("body")
+            .append("svg")
+              .attr("width", width + margin)
+              .attr("height", height + margin)
+            .append('g')
+                .attr('class','chart');
+            
+            
+            
+        
+
+      /*
+        Dimple.js Chart construction code
+      */
+
+          var myChart = new dimple.chart(svg, data);
+
+                    
+          var x = myChart.addTimeAxis("x", "Year"); 
+          var y = myChart.addMeasureAxis("y", "N of Businesses Sold");
+          var z = myChart.addMeasureAxis("z", "Average Sale Price");
+          y.overrideMin = 6900;
+          z.overrideMin = 150000;
+          z.lab
+
+          //var myLegend = myChart.addLegend(25, 5, 550, 20, "right");
+          //myChart.addLegend(25, 5, 550, 20, "right", "N of Businesses Sold");
+          //myLegend.series = ["Average Sale Price"];
+
+
+
+          x.dateParseFormat = "%Y";
+          x.tickFormat = "%Y";
+          x.timeInterval = 1;
+          myChart.addSeries(null, dimple.plot.line);
+          var s =  myChart.addSeries(null, dimple.plot.bubble);
+          s.afterDraw = function (shp, d) {
+            var shape = d3.select(shp);
+            svg.append("text")
+                .attr("x", parseFloat(shape.attr("cx")))
+                .attr("y", parseFloat(shape.attr("cy")) + 4)
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .style("font-family", "sans-serif")
+                .style("opacity", 1)
+                .text(d3.format(",.1f")(d.zValue / 1000) + "k");
+          };
+
+
+          myChart.draw();
+          svg.append("circle")
+    		.attr("cx", 500)
+            .attr("cy", 30)
+            .attr("r", 20)
+            .attr("opacity", 0.8)
+            .attr("fill", "#80B1D3")
+            .attr("stroke", "#6b94b0")
+          svg.append("text")
+          	.text("Average price selling price $")
+    		.attr("x", 650)
+           	.attr("y", 30)
+           	.style("text-anchor", "middle")
+            .style("font-size", "20px")
+            .style("font-family", "sans-serif")
+            .style("opacity", 1);
+            
+          
+                  
+
+        };
+      </script>
+  </head>
+<body>
+  <script type="text/javascript">
+  /*
+    Use D3 (not dimple.js) to load the TSV file
+    and pass the contents of it to the draw function
+    */
+  d3.tsv("mini-project-2.tsv", draw);
+  </script>
+</body>
+</html>
